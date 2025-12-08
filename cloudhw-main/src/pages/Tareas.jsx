@@ -29,7 +29,7 @@ function Tareas() {
   const fetchBucketFiles = async () => {
     if (!username) return
     try {
-      const response = await fetch(`http://localhost:3001/files/list/${username}`)
+      const response = await fetch(`http://3.19.64.159:3001/files/list/${username}`)
       const data = await response.json()
       setBucketFiles(data.files || [])
     } catch (error) {
@@ -95,7 +95,7 @@ function Tareas() {
   formData.append("file", selectedFile);
   formData.append("username", username);
   try {
-    const res = await fetch("http://localhost:3001/files/upload", {
+    const res = await fetch("http://3.19.64.159:3001/files/upload", {
       method: "POST",
       body: formData,
     });
