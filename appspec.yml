@@ -1,11 +1,10 @@
 version: 0.0
 os: linux
+
 files:
-  # 1. El Frontend va a la carpeta pública de Apache
   - source: /frontend
     destination: /var/www/html
-  
-  # 2. El Backend va a una carpeta en el usuario ubuntu
+
   - source: /backend
     destination: /home/ubuntu/cloudhw-backend-deploy
 
@@ -14,6 +13,7 @@ hooks:
     - location: scripts/install_dependencies.sh
       timeout: 300
       runas: ubuntu
+
   ApplicationStart:
     - location: scripts/start_server.sh
       timeout: 300
