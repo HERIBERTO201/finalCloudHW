@@ -1,19 +1,12 @@
 #!/bin/bash
-# 1. Configurar permisos para Apache (Frontend)
-# Esto asegura que Apache pueda leer los archivos nuevos de React
-sudo chown -R www-data:www-data /var/www/html
-sudo chmod -R 755 /var/www/html
 
-# 2. Reiniciar Backend con PM2
 cd /home/ubuntu/cloudhw-backend-deploy
 
-# Verifica si el proceso ya existe para reiniciarlo o iniciarlo
-if pm2 list | grep -q "cloudhw-api"; then
-    pm2 restart cloudhw-api
-else
-    # Asegúrate de que server.js es tu archivo principal (lo vi en tu imagen)
-    pm2 start server.js --name "cloudhw-api"
-fi
+echo "Deteniendo proceso anterior..."
+pm2 stop cloudhw-backend || true
+pm2 delete cloudhw-backend || true
 
-# Guardar la lista de procesos para que revivan si el servidor se reinicia
+echo "Iniciando backend con PM2..."
+pm2 start index.js --name cloudhw-backend
+
 pm2 save
