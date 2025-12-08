@@ -17,7 +17,7 @@ function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/api/register", {
+      const res = await fetch("http://3.19.64.159:3001/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
