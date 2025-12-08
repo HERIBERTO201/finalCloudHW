@@ -1,44 +1,34 @@
 version: 0.2
 
-env:
-  runtime-versions:
-    nodejs: 22
-
 phases:
   install:
-    commands:
-      - echo "Preparando entorno...."
-      chmod +x scripts/install_dependencies.sh
-      chmod +x scripts/start_server.sh
-
+    runtime-versions:
+      nodejs: 18
 
   pre_build:
     commands:
-      - echo "Instalando dependencias del backend..."
+      - echo "Instalando dependencias..."
       - cd cloudhw-backend && npm install && cd ..
-
-      - echo "Instalando dependencias del frontend..."
       - cd cloudhw-main && npm install && cd ..
 
   build:
     commands:
-      - echo "Construyendo el frontend con Vite..."
+      - echo "Construyendo Frontend (Vite)..."
       - cd cloudhw-main && npm run build && cd ..
 
   post_build:
     commands:
-      - echo "Empaquetando archivos para despliegue..."
-
+      - echo "Creando carpeta deployment_package..."
       - mkdir -p deployment_package/backend
       - mkdir -p deployment_package/frontend
 
-      # Backend
+      - echo "Copiando Backend..."
       - cp -r cloudhw-backend/* deployment_package/backend/
 
-      # Frontend
+      - echo "Copiando Frontend..."
       - cp -r cloudhw-main/dist/* deployment_package/frontend/
 
-      # Archivos de despliegue
+      - echo "Copiando archivos de despliegue..."
       - cp appspec.yml deployment_package/
       - cp -r scripts deployment_package/
 
