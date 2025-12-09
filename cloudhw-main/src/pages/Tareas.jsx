@@ -39,7 +39,7 @@ function Tareas() {
   const handleDelete = async (filename) => {
     if (!window.confirm(`¿Eliminar archivo ${filename}?`)) return;
     try {
-      const res = await fetch(`http://localhost:3001/files/delete/${username}/${filename}`, {
+      const res = await fetch(`http://3.19.64.159:3001/files/delete/${username}/${filename}`, {
         method: "DELETE",
       });
 
@@ -86,7 +86,7 @@ function Tareas() {
     setNewTaskDate('')
   }
   const handleDownload = (filename) => {
-  window.open(`http://localhost:3001/files/download/${username}/${filename}`, "_blank");
+  window.open(`http://3.19.64.159:3001/files/download/${username}/${filename}`, "_blank");
   };
   const handleUploadFile = async (e) => {
   e.preventDefault();
