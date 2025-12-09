@@ -46,7 +46,7 @@ function Tareas() {
   const fetchTasks = async () => {
     if (!username) return
     try {
-      const res = await fetch(`http://3.19.64.159:3001/homework/${username}`)
+      const res = await fetch(`/homework/${username}`)
       const data = await res.json()
       setTasks(data.homework || [])
     } catch (err) {
@@ -69,7 +69,7 @@ function Tareas() {
         username
       }
 
-      const res = await fetch("http://3.19.64.159:3001/homework", {
+      const res = await fetch("/homework", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -95,7 +95,7 @@ function Tareas() {
   const handleDeleteTask = async (hwname) => {
     if (!window.confirm("¿Eliminar esta tarea?")) return
     try {
-      const res = await fetch("http://3.19.64.159:3001/homework", {
+      const res = await fetch("/homework", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ hwname, username })
@@ -136,7 +136,7 @@ function Tareas() {
         username
       }
 
-      const res = await fetch("http://3.19.64.159:3001/homework", {
+      const res = await fetch("/homework", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -166,7 +166,7 @@ function Tareas() {
   const fetchBucketFiles = async () => {
     if (!username) return
     try {
-      const response = await fetch(`http://3.19.64.159:3001/files/list/${username}`)
+      const response = await fetch(`/files/list/${username}`)
       const data = await response.json()
       setBucketFiles(data.files || [])
     } catch (error) {
@@ -175,13 +175,13 @@ function Tareas() {
   }
 
   const handleDownload = (filename) => {
-    window.open(`http://3.19.64.159:3001/files/download/${username}/${filename}`, "_blank")
+    window.open(`/files/download/${username}/${filename}`, "_blank")
   }
 
   const handleDelete = async (filename) => {
     if (!window.confirm(`¿Eliminar archivo ${filename}?`)) return
     try {
-      const res = await fetch(`http://3.19.64.159:3001/files/delete/${username}/${filename}`, {
+      const res = await fetch(`/files/delete/${username}/${filename}`, {
         method: "DELETE"
       })
 
@@ -211,7 +211,7 @@ function Tareas() {
     formData.append("username", username)
 
     try {
-      const res = await fetch("http://3.19.64.159:3001/files/upload", {
+      const res = await fetch("/files/upload", {
         method: "POST",
         body: formData
       })

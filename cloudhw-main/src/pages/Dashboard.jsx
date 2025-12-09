@@ -23,12 +23,12 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         // ------- HOMEWORK -------
-        const resTasks = await fetch(`http://3.19.64.159:3001/homework/${username}`)
+        const resTasks = await fetch(`/homework/${username}`)
         const dataTasks = await resTasks.json()
         setTasks(dataTasks.homework)   // <-- USAR EL OBJETO CORRECTO
 
         // ------- EVENTS -------
-        const resEvents = await fetch(`http://3.19.64.159:3001/events/${username}`)
+        const resEvents = await fetch(`/events/${username}`)
         const dataEvents = await resEvents.json()
         setEvents(dataEvents.events)   // <-- USAR EL OBJETO CORRECTO
 

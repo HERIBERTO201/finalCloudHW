@@ -28,7 +28,7 @@ function Calendario() {
     const username = localStorage.getItem("cloudhw-username")
     if (!username) return
 
-    fetch(`http://3.19.64.159:3001/events/${username}`)
+    fetch(`/events/${username}`)
       .then(res => res.json())
       .then(data => {
         if (!data.events) return
@@ -114,7 +114,7 @@ function Calendario() {
     if (!username) return
 
     // Guardar en la BASE DE DATOS
-    await fetch("http://3.19.64.159:3001/events", {
+    await fetch("/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
