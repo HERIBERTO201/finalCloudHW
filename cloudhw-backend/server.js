@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 // Importar rutas
 import authRoutes from "./routes/auth.js";
 import filesRoutes from "./routes/files.js";
+import coursesRoutes from "./routes/courses.js";
+import homeworkRoutes from "./routes/hw.js";
+import eventsRoutes from "./routes/events.js";
 
 // Configurar variables de entorno
 dotenv.config();
@@ -57,6 +60,9 @@ app.use(express.json());
 // ------------------------
 app.use("/api", authRoutes);
 app.use("/files", filesRoutes);
+app.use("/courses", coursesRoutes);
+app.use("/homework", homeworkRoutes);
+app.use("/events", eventsRoutes);
 
 // ------------------------
 // INICIAR SERVIDOR

@@ -20,30 +20,49 @@ function Calendario() {
     }
   }, [navigate])
 
-  // Cargar eventos almacenados
+
+  /* ============================================================
+      CARGAR EVENTOS DESDE LA BASE DE DATOS
+  ============================================================ */
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(CALENDAR_STORAGE_KEY)
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
-          setEvents(parsed)
-        }
-      }
-    } catch (err) {
-      console.error("Error cargando calendario:", err)
-    }
-    setLoaded(true)
+    const username = localStorage.getItem("cloudhw-username")
+    if (!username) return
+
+    fetch(`http://3.19.64.159:3001/events/${username}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.events) return
+
+        const bdEvents = {}
+
+        data.events.forEach(ev => {
+          const key = ev.date.split("T")[0]  // YYYY-MM-DD
+
+          if (!bdEvents[key]) bdEvents[key] = []
+          bdEvents[key].push(ev.eventoName)
+        })
+
+        setEvents(bdEvents)
+        localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(bdEvents))
+        setLoaded(true)
+      })
+      .catch(err => console.error("Error cargando eventos desde BD:", err))
   }, [])
 
-  // Guardar eventos del calendario
+
+  /* ============================================================
+      Guardar eventos también en localStorage como respaldo
+  ============================================================ */
   useEffect(() => {
     if (loaded) {
       localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(events))
     }
   }, [events, loaded])
 
-  // Sincronizar calendario con dashboard
+
+  /* ============================================================
+      Sincronizar calendario con dashboard
+  ============================================================ */
   const syncEventsToDashboard = () => {
     const saved = localStorage.getItem(CALENDAR_STORAGE_KEY)
 
@@ -77,18 +96,35 @@ function Calendario() {
     localStorage.setItem("cloudhw-events", JSON.stringify(transformed))
   }
 
-  // Sync automático al cargar
   useEffect(() => {
     if (loaded) {
       syncEventsToDashboard()
     }
   }, [loaded])
 
-  // Guardar evento nuevo
-  const handleSaveEvent = (e) => {
+
+  /* ============================================================
+      Guardar evento: BD + UI
+  ============================================================ */
+  const handleSaveEvent = async (e) => {
     e.preventDefault()
     if (!newEventTitle.trim()) return
 
+    const username = localStorage.getItem("cloudhw-username")
+    if (!username) return
+
+    // Guardar en la BASE DE DATOS
+    await fetch("http://3.19.64.159:3001/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventoName: newEventTitle.trim(),
+        date: selectedDateKey,
+        username
+      })
+    })
+
+    // Guardar en UI sin recargar
     const prev = Array.isArray(events[selectedDateKey]) ? events[selectedDateKey] : []
 
     const updated = {
@@ -98,13 +134,15 @@ function Calendario() {
 
     setEvents(updated)
 
-    // Sincroniza con dashboard
     setTimeout(() => syncEventsToDashboard(), 50)
 
     setIsModalOpen(false)
   }
 
-  // Calcular datos del mes
+
+  /* ============================================================
+      Datos del calendario
+  ============================================================ */
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -126,6 +164,10 @@ function Calendario() {
     setIsModalOpen(true)
   }
 
+
+  /* ============================================================
+      RENDER
+  ============================================================ */
   return (
     <div className="layout">
       <Navbar />

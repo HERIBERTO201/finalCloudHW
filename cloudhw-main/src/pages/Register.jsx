@@ -15,7 +15,6 @@ function Register() {
       alert("Por favor, completa todos los campos.")
       return
     }
-
     try {
       const res = await fetch("http://3.19.64.159:3001/api/register", {
         method: "POST",

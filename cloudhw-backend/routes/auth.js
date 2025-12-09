@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
       [username, email, password]
     );
 
-    // Crea carpeta en S3
+    // Crear carpeta en S3
     const folderName = `${username}/`;
 
     await s3.send(
@@ -40,6 +40,12 @@ router.post("/register", async (req, res) => {
     res.json({ message: "Usuario registrado" });
   } catch (err) {
     console.log(err);
+
+    // Detectar error de entrada duplicada (correo repetido)
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ message: "El correo ya está registrado" });
+    }
+
     res.status(500).json({ message: "Error en registro" });
   }
 });

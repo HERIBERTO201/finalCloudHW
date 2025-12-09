@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
-const TASKS_STORAGE_KEY = 'cloudhw-tasks'
-const EVENTS_STORAGE_KEY = 'cloudhw-events'
-
 function Dashboard() {
   const navigate = useNavigate()
 
@@ -19,50 +16,31 @@ function Dashboard() {
     }
   }, [navigate])
 
-  // Cargar datos del localStorage
   useEffect(() => {
-    const savedTasks = localStorage.getItem(TASKS_STORAGE_KEY)
-    const savedEvents = localStorage.getItem(EVENTS_STORAGE_KEY)
+    const username = localStorage.getItem('cloudhw-username')
+    if (!username) return
 
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks))
-    } else {
-      setTasks([])
-    }
-
-    if (savedEvents) {
+    const fetchData = async () => {
       try {
-        const parsed = JSON.parse(savedEvents)
-        if (Array.isArray(parsed)) {
-          setEvents(parsed)
-        } else {
-          setEvents([])
-        }
-      } catch (err) {
-        console.error("Error al leer eventos:", err)
-        setEvents([])
+        // ------- HOMEWORK -------
+        const resTasks = await fetch(`http://3.19.64.159:3001/homework/${username}`)
+        const dataTasks = await resTasks.json()
+        setTasks(dataTasks.homework)   // <-- USAR EL OBJETO CORRECTO
+
+        // ------- EVENTS -------
+        const resEvents = await fetch(`http://3.19.64.159:3001/events/${username}`)
+        const dataEvents = await resEvents.json()
+        setEvents(dataEvents.events)   // <-- USAR EL OBJETO CORRECTO
+
+      } catch (error) {
+        console.error("Error obteniendo datos:", error)
+      } finally {
+        setIsLoading(false)
       }
-    } else {
-      setEvents([])
     }
 
-    setIsLoading(false)
+    fetchData()
   }, [])
-
-  // Guardar tareas (NO eventos)
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks))
-    }
-  }, [tasks, isLoading])
-
-  const handleToggleTask = (id) => {
-    setTasks(prev =>
-      prev.map(t =>
-        t.id === id ? { ...t, completada: !t.completada } : t
-      )
-    )
-  }
 
   if (isLoading) {
     return (
@@ -80,7 +58,7 @@ function Dashboard() {
       <Navbar />
       <main className="main-content">
 
-        {/* Tareas */}
+        {/* TAREAS */}
         <div className="widget-card">
           <h3>Tareas Pendientes</h3>
 
@@ -88,19 +66,11 @@ function Dashboard() {
             {tasks.length === 0 ? (
               <li className="task-item empty">No hay tareas pendientes</li>
             ) : (
-              tasks.map(task => (
-                <li
-                  className={`task-item ${task.completada ? 'completed' : ''}`}
-                  key={task.id}
-                >
-                  <input
-                    type="checkbox"
-                    checked={task.completada}
-                    onChange={() => handleToggleTask(task.id)}
-                  />
+              tasks.map((task, index) => (
+                <li className="task-item" key={index}>
                   <label>
-                    <strong>{task.materia}</strong> - {task.descripcion}
-                    {task.fechaLimite && <span>{task.fechaLimite}</span>}
+                    <strong>{task.hwname}</strong> — {task.hwdesc}
+                    {task.date && <span>{task.date}</span>}
                   </label>
                 </li>
               ))
@@ -108,7 +78,7 @@ function Dashboard() {
           </ul>
         </div>
 
-        {/* Eventos */}
+        {/* EVENTOS */}
         <div className="widget-card">
           <h3>Próximos Eventos</h3>
 
@@ -116,12 +86,12 @@ function Dashboard() {
             {events.length === 0 ? (
               <li className="event-item empty">No hay eventos próximos</li>
             ) : (
-              events.map(ev => (
-                <li className="event-item" key={ev.id}>
+              events.map((ev, index) => (
+                <li className="event-item" key={index}>
                   <span className="event-icon">🗓️</span>
                   <div className="event-details">
-                    <strong>{ev.titulo}</strong>
-                    <span>{ev.fecha}</span>
+                    <strong>{ev.eventoName}</strong>
+                    <span>{ev.date}</span>
                   </div>
                 </li>
               ))

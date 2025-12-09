@@ -220,6 +220,22 @@ body {
 .delete-btn:hover {
   background: #d32f2f;
 }
+
+.edit-btn {
+  background-color: rgb(255, 255, 255);
+  border: 2px solid rgb(60, 255, 0);
+  color: rgb(60, 255, 0);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--borde-radio-input);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.edit-btn:hover {
+  background-color: rgb(60, 255, 0);
+  color: white;
+}
+
 .download-btn {
   background-color: white;
   border: 2px solid #00eeff;
