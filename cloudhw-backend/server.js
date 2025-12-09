@@ -12,37 +12,55 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- CONFIGURACIÓN CORS CORREGIDA ---
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://3.19.64.159"
-    ];
-    // Permitir peticiones sin origin (como Postman o Curl)
-    if (!origin) return callback(null, true);
+// =========================
+// 🔥 CONFIGURACIÓN CORS PRO
+// =========================
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("CORS no permitido"), false);
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
-// NOTA: Se eliminó app.options("*", cors()) porque causa conflicto con credentials: true
+// Lista de orígenes permitidos
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://3.19.64.159"  // tu frontend en AWS
+];
 
-// Middleware para entender JSON
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Permitir solicitudes sin origen (Postman, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      // Permitir si coincide con la lista
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Origen bloqueado por CORS"), false);
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+
+    // 🔥 Impide que Express responda 204 automáticamente
+    optionsSuccessStatus: 200,
+    preflightContinue: false
+  })
+);
+
+// 🔥 Manejar preflight OPTIONS correctamente
+app.options("*", cors());
+
+// Middleware para aceptar JSON
 app.use(express.json());
 
-// --- RUTAS ---
+// ------------------------
+// RUTAS
+// ------------------------
 app.use("/api", authRoutes);
 app.use("/files", filesRoutes);
 
-// --- INICIAR SERVIDOR ---
+// ------------------------
+// INICIAR SERVIDOR
+// ------------------------
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`🔥 Servidor corriendo en puerto ${PORT}`);
 });
