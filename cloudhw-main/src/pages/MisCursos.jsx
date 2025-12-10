@@ -27,7 +27,7 @@ function MisCursos() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch(`/courses/${username}`)
+        const res = await fetch(`http://3.19.64.159:3001/courses/${username}`)
         const data = await res.json()
 
         if (res.ok) {
@@ -63,7 +63,7 @@ function MisCursos() {
     }
 
     try {
-      const res = await fetch("/courses", {
+      const res = await fetch("http://3.19.64.159:3001/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse)
